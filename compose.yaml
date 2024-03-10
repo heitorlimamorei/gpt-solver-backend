@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  nodejs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-10000}:10000"
+    env_file:
+      - .env
+    working_dir: /usr/src/app
