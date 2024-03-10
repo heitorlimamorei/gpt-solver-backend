@@ -30,15 +30,15 @@ export default function getUserController(service: IUserService): IUserControlle
         if (!email || !name) {
             generateHandlerError(`MALFORMED BODY: ${req.body}`, 400);
         }
-        if (name.length > 3) {
+        if (name.length < 3) {
             generateHandlerError(`INVALID NAME: ${name}`, 400);
         }
         await service.Create(email, name);
         res.status(201).json({
           message: "User created successfully"
         });
-      } catch (err) {
-        next(err);
+      } catch (err: any) {
+        next(err.message);
       }
     }
     async function Show(
@@ -67,8 +67,8 @@ export default function getUserController(service: IUserService): IUserControlle
             }
             generateHandlerError(`MALFORMED REQUEST must have a query`, 400);
 
-        } catch (err) {
-          next(err);
+        } catch (err: any) {
+          next(err.message);
         }
       }
       async function Update(
@@ -91,8 +91,8 @@ export default function getUserController(service: IUserService): IUserControlle
             res.status(201).json({
               message: "User updated successfully"
             });
-          } catch (err) {
-            next(err);
+          } catch (err: any) {
+            next(err.message);
           }
       }
       async function Delete(
@@ -109,8 +109,8 @@ export default function getUserController(service: IUserService): IUserControlle
             res.status(201).json({
               message: "User deleted successfully"
             });
-          } catch (err) {
-            next(err);
+          } catch (err: any) {
+            next(err.message);
           }
       }
     return {

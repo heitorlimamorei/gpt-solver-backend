@@ -46,7 +46,7 @@ export default function getUserRepository(): IUserRepository {
         const user = docRef.data() as IUser;
     
         if (!docRef.exists()){
-            generateRepositoryError(`USER NOT FOUND - EMAIL: ${id}`, 404);
+            generateRepositoryError(`USER NOT FOUND - ID: ${id}`, 404);
         }
     
         return user;
