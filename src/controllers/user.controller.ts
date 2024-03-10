@@ -5,6 +5,7 @@ import IUser, { INewUser } from "../types/user";
 export interface IUserController {
   Create(req: Request, res: Response, next: NextFunction): Promise<void>;
   Show(req: Request, res: Response, next: NextFunction): Promise<void>;
+  GetTokensCount(req: Request, res: Response, next: NextFunction): Promise<void>;
   Update(req: Request, res: Response, next: NextFunction): Promise<void>;
   Delete(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
@@ -58,14 +59,34 @@ export default function getUserController(service: IUserService): IUserControlle
                 res.status(200).json(user);
                 return;
             }
-            if (query?.tokenscount) {
-                const count = await service.ShowTokensCount(query.tokenscount);
+            if (query?.tokenscount && query?.id) {
+                const count = await service.ShowTokensCount(query.id);
                 res.status(200).json({
                     "tokensCount": count
                 });
                 return;
             }
             generateHandlerError(`MALFORMED REQUEST must have a query`, 400);
+
+        } catch (err: any) {
+          next(err.message);
+        }
+      }
+      async function GetTokensCount(
+        req: Request,
+        res: Response,
+        next: NextFunction
+      ): Promise<void> {
+        try {
+            const id = req.params.id as string;
+            if (id) {
+                const count = await service.ShowTokensCount(id);
+                res.status(200).json({
+                    "tokensCount": count
+                });
+                return;
+            }
+            generateHandlerError(`MALFORMED REQUEST must have a id`, 400);
 
         } catch (err: any) {
           next(err.message);
@@ -116,6 +137,7 @@ export default function getUserController(service: IUserService): IUserControlle
     return {
         Create,
         Show,
+        GetTokensCount,
         Update,
         Delete,
     }

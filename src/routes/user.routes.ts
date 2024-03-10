@@ -12,6 +12,7 @@ const router = express.Router();
 
 router.post("/", controller.Create);
 router.get("/", controller.Show);
+router.get("/tokenscount/:id", controller.GetTokensCount);
 router.put("/", controller.Update);
 router.delete("/:id", controller.Delete);
 
