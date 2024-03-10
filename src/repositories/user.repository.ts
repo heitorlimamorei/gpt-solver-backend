@@ -4,7 +4,7 @@ import IUser from "../types/user";
 import sanitilizeArrayData from "../utils/datafunctions";
 
 const generateRepositoryError = (message: string, status: number) => {
-    throw new Error(`REPOSITORY: ${message} - ${status}`);
+    throw new Error(`REPOSITORY:${message}-${status}`);
 };
 
 interface IUpdatedField<T>  {

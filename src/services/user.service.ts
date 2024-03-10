@@ -12,10 +12,11 @@ export interface IUserService {
     Delete(id: string): Promise<void>;
     Show(id: string): Promise<IUser>;
     ShowByEmail(email: string): Promise<IUser>
+    ShowTokensCount(id: string): Promise<number>;
 }
 
 const generateServiceError = (message: string, status: number) => {
-    throw new Error(`SERVICE: ${message} - ${status}`);
+    throw new Error(`SERVICE:${message}-${status}`);
 };
 
 export default function getUserService(repository: IUserRepository): IUserService {
@@ -82,6 +83,11 @@ export default function getUserService(repository: IUserRepository): IUserServic
         }));
     }
 
+    async function ShowTokensCount(id: string): Promise<number> {
+        const user = await repository.Show(id);
+        return user.totalTokens;
+    }
+
     return {
         Create: CreateUser,
         Update: UpdateUser,
@@ -91,6 +97,7 @@ export default function getUserService(repository: IUserRepository): IUserServic
         RemoveChat: RemoveChat,
         Delete: DeleteUser,
         Show: ShowUserById,
-        ShowByEmail: ShowUserByEmail
+        ShowByEmail: ShowUserByEmail,
+        ShowTokensCount: ShowTokensCount,
     }
 }
