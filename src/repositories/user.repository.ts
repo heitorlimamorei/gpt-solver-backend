@@ -43,7 +43,7 @@ export default function getUserRepository(): IUserRepository {
     async function ShowUserById(id: string): Promise<IUser> {
         const usersRef = collection(db, "users");
         const docRef = await getDoc(doc(usersRef, id));
-        const user = docRef.data() as IUser;
+        const user = {id: id, ...docRef.data()} as IUser;
     
         if (!docRef.exists()){
             generateRepositoryError(`USER NOT FOUND - ID: ${id}`, 404);
