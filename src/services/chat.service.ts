@@ -4,7 +4,7 @@ import { IChat, IChatList, IMessage } from "../types/chat";
 import { PromiseScheduler } from "../utils/promises";
 import getUserService from "./user.service";
 
-type RoleType = "user" | "assistant" | "system";
+export type RoleType = "user" | "assistant" | "system";
 
 export interface IChatService {
     Create(ownerId: string, name: string): Promise<void>;
@@ -101,3 +101,5 @@ function getChatService(repository: IChatRepository): IChatService {
         Delete
     };
 }
+
+export default getChatService;
