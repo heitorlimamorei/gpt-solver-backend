@@ -1,5 +1,5 @@
 import { collection, deleteDoc, doc, getDoc, getDocs, query, where } from "firebase/firestore";
-import { IChat, IChatList, IMessage } from "../types/chat";
+import { IChat, IChatList, IChatResp, IMessage } from "../types/chat";
 import { addDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 import sanitilizeArrayData from "../utils/datafunctions";
@@ -8,13 +8,15 @@ const generateRepositoryError = (message: string, status: number) => {
     throw new Error(`REPOSITORY:${message}-${status}`);
 };
 
+type RoleType = "user" | "assistant" | "system";
+
 export interface IChatRepository {
-    Create(ownerId: string, name: string): Promise<void>;
+    Create(ownerId: string, name: string): Promise<IChatResp>;
     Delete(id: string): Promise<void>;
     Show(id: string): Promise<IChat>;
     ShowList(ownerId: string): Promise<IChatList[]>;
     ShowMessages(id: string): Promise<IMessage[]>;
-    AddMessage(chatId: string, content: string): Promise<void>;
+    AddMessage(chatId: string, content: string, role: RoleType): Promise<void>;
 }
 
 async function createMessageRepo(chatId: string): Promise<void> {
@@ -30,19 +32,24 @@ async function createMessageRepo(chatId: string): Promise<void> {
 };
 
 export default function getChatRepository(): IChatRepository {
-    async function Create(ownerId: string, name: string): Promise<void>{
+    async function Create(ownerId: string, name: string): Promise<IChatResp>{
         const usersRef = collection(db, "chats");
-        const docRef = await addDoc(usersRef, {
+
+        const chat = {
             name: name,
             ownerId: ownerId,
             createdAt: new Date(),
-        });
+        };
+
+        const docRef = await addDoc(usersRef, chat);
     
         if (!docRef.id) {
             generateRepositoryError(`ERROR WHEN CREATE CHAT`, 500);
         }
 
         await createMessageRepo(docRef.id);
+
+        return {id: docRef.id};
     }
 
     async function Delete(chatId: string): Promise<void> {
@@ -87,11 +94,11 @@ export default function getChatRepository(): IChatRepository {
         return messages;
     }
 
-    async function AddMessage(chatId: string, content: string): Promise<void> {
+    async function AddMessage(chatId: string, content: string, role: RoleType): Promise<void> {
        try {
         const collectionRef = collection(db, `chats/${chatId}/messages`);
         const messagesRef = await addDoc(collectionRef, {
-            role: "user",
+            role: role,
             content: content,
         });
        } catch (err) {
