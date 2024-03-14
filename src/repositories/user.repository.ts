@@ -1,8 +1,7 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 import IUser from "../types/user";
 import sanitilizeArrayData from "../utils/datafunctions";
-
 const generateRepositoryError = (message: string, status: number) => {
     throw new Error(`REPOSITORY:${message}-${status}`);
 };
@@ -112,7 +111,7 @@ export default function getUserRepository(): IUserRepository {
             generateRepositoryError(`INVALID FIELD TO BE UPDATED - ID: ${id}`, 500);
         }
     
-        if (updatedField.value != null && updatedField.value != undefined) {
+        if (!updatedField.value) {
             generateRepositoryError(`INVALID VALUE TO BE UPDATED - ID: ${id}`, 500);
         }
     
@@ -120,7 +119,7 @@ export default function getUserRepository(): IUserRepository {
             generateRepositoryError(`NOTHING TO BE UPDATED - ID: ${id}`, 400);
         }
     
-        await setDoc(docRef, {
+        await updateDoc(docRef, {
             [updatedField.field]: updatedField.value,
         });
     }
