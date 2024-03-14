@@ -15,3 +15,7 @@ export interface IChatList {
     id: string;
     name: string;
 }
+
+export interface IChatResp {
+    id: string;
+}
