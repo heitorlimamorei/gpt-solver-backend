@@ -14,6 +14,7 @@ router.post("/", controller.Create);
 router.get("/", controller.Show);
 router.get("/tokenscount/:id", controller.GetTokensCount);
 router.put("/", controller.Update);
+router.post("/:id/charge", controller.Charge)
 router.delete("/:id", controller.Delete);
 
 export default router;

@@ -60,7 +60,7 @@ export default function getUserService(repository: IUserRepository): IUserServic
     }
 
     async function RemoveTokens(id: string, tokens: number): Promise<void> {
-        if (tokens > 0) {
+        if (tokens <= 0) {
             generateServiceError(`TOKENS MUST BE > 0: ${tokens}`, 500);
         }
         await repository.UpdateField(id, (c) => ({

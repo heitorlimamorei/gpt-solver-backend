@@ -6,6 +6,7 @@ export interface IUserController {
   Create(req: Request, res: Response, next: NextFunction): Promise<void>;
   Show(req: Request, res: Response, next: NextFunction): Promise<void>;
   GetTokensCount(req: Request, res: Response, next: NextFunction): Promise<void>;
+  Charge(req: Request, res: Response, next: NextFunction): Promise<void>;
   Update(req: Request, res: Response, next: NextFunction): Promise<void>;
   Delete(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
@@ -134,11 +135,27 @@ export default function getUserController(service: IUserService): IUserControlle
             next(err.message);
           }
       }
+      async function Charge(req: Request, res: Response, next: NextFunction) {
+        try {
+            const id = req.params.id;
+            const { count } = req.body;
+            if (!id) {
+                generateHandlerError(`MALFORMED REQUEST must have an id`, 400);
+            }
+            await service.RemoveTokens(id, count);
+            res.status(201).json({
+              message: "User charged successfully"
+            });
+          } catch (err: any) {
+            next(err.message);
+          }
+      }
     return {
         Create,
         Show,
         GetTokensCount,
         Update,
         Delete,
+        Charge,
     }
 }
