@@ -20,7 +20,7 @@ export interface IChatRepository {
 }
 
 async function createMessageRepo(chatId: string): Promise<void> {
-    const messagesRef = collection(db, `chats/${chatId}}/messages`);
+    const messagesRef = collection(db, `chats/${chatId}/messages`);
     const messageRef = await addDoc(messagesRef, {
         role: "system",
         content: "Olá, eu sou o GPT Solver, como posso ajudar?",
