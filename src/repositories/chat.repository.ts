@@ -100,6 +100,7 @@ export default function getChatRepository(): IChatRepository {
         const messagesRef = await addDoc(collectionRef, {
             role: role,
             content: content,
+            createdAt: new Date()
         });
        } catch (err) {
         generateRepositoryError(`CHAT WHEN CREATING MESSAGE - ID: ${chatId}`, 500);

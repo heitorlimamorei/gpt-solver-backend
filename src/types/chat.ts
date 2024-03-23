@@ -7,6 +7,8 @@ export interface IChat {
 }
 
 export interface IMessage {
+    id?: string;
+    createdAt?: firebaseTimesStampType;
     role: "system" | "assistant" | "user"
     content: string;
 }
