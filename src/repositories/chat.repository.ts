@@ -24,6 +24,7 @@ async function createMessageRepo(chatId: string): Promise<void> {
     const messageRef = await addDoc(messagesRef, {
         role: "system",
         content: "Olá, eu sou o GPT Solver, como posso ajudar?",
+        createdAt: new Date()
     });
 
     if (!messageRef.id) {
