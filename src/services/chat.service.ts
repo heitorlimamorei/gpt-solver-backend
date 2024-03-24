@@ -7,7 +7,7 @@ import getUserService from "./user.service";
 export type RoleType = "user" | "assistant" | "system";
 
 export interface IChatService {
-    Create(ownerId: string, name: string): Promise<void>;
+    Create(ownerId: string, name: string): Promise<string>;
     Delete(id: string): Promise<void>;
     Show(id: string): Promise<IChat>;
     ShowList(ownerId: string): Promise<IChatList[]>;
@@ -23,7 +23,7 @@ const userRepo = getUserRepository();
 const userService = getUserService(userRepo);
 
 function getChatService(repository: IChatRepository): IChatService {
-    async function Create(ownerId: string, name: string): Promise<void> {
+    async function Create(ownerId: string, name: string): Promise<string> {
         const owner = await userService.Show(ownerId);
 
         if (!owner) {
@@ -37,6 +37,7 @@ function getChatService(repository: IChatRepository): IChatService {
         const chat = await repository.Create(ownerId, name);
 
         await userService.AddChat(owner.id, chat.id)
+        return chat.id;
     }
 
     async function Show(id: string): Promise<IChat> {
