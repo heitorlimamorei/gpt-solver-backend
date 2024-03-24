@@ -28,8 +28,8 @@ function getChatController(chatService: IChatService): IChatController {
                 generateHandlerError("Invalid ownerId or name", 400);
             }
 
-            await chatService.Create(ownerId, name);
-            res.sendStatus(201);
+            const id = await chatService.Create(ownerId, name);
+            res.status(201).json({ id });
         } catch (error: any) {
             next(error.message);
         }
