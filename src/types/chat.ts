@@ -11,6 +11,7 @@ export interface IMessage {
     createdAt?: firebaseTimesStampType;
     role: "system" | "assistant" | "user"
     content: string;
+    image_url?: string;
 }
 
 export interface IChatList {

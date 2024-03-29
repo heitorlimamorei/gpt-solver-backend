@@ -102,8 +102,14 @@ function getChatController(chatService: IChatService): IChatController {
             if (!chatId || typeof chatId !== "string" || !content || typeof content !== "string" || content.length < 5 || !role || !["system", "assistant", "user"].includes(role)) {
                 generateHandlerError("Invalid chatId, content, or role", 400);
             }
-
-            await chatService.AddMessage(chatId, content, role as RoleType);
+            
+            if (req.body?.image_url) {
+                await chatService.AddVMessage(chatId, content, role as RoleType, req.body.image_url);
+                
+            } else {
+                await chatService.AddMessage(chatId, content, role as RoleType);
+            }
+          
             res.sendStatus(201);
         } catch (error: any) {
             next(error.message);

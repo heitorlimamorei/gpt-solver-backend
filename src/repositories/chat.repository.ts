@@ -17,6 +17,7 @@ export interface IChatRepository {
     ShowList(ownerId: string): Promise<IChatList[]>;
     ShowMessages(id: string): Promise<IMessage[]>;
     AddMessage(chatId: string, content: string, role: RoleType): Promise<void>;
+    AddVMessage(chatId: string, content: string, role: RoleType, image_url: string): Promise<void>;
 }
 
 async function createMessageRepo(chatId: string): Promise<void> {
@@ -95,6 +96,20 @@ export default function getChatRepository(): IChatRepository {
         return messages;
     }
 
+    async function AddVMessage(chatId: string, content: string, role: RoleType, image_url: string): Promise<void> {
+        try {
+            const collectionRef = collection(db, `chats/${chatId}/messages`);
+            const messagesRef = await addDoc(collectionRef, {
+                role: role,
+                content: content,
+                createdAt: new Date(),
+                image_url: image_url,
+            });
+           } catch (err) {
+            generateRepositoryError(`CHAT WHEN CREATING MESSAGE - ID: ${chatId}`, 500);
+           }
+    }
+
     async function AddMessage(chatId: string, content: string, role: RoleType): Promise<void> {
        try {
         const collectionRef = collection(db, `chats/${chatId}/messages`);
@@ -114,6 +129,7 @@ export default function getChatRepository(): IChatRepository {
         Show,
         ShowList,
         ShowMessages,
-        AddMessage
+        AddMessage,
+        AddVMessage
     };
 };

@@ -1,6 +1,7 @@
 import { IChatRepository } from "../repositories/chat.repository";
 import getUserRepository from "../repositories/user.repository";
 import { IChat, IChatList, IMessage } from "../types/chat";
+import { isValidBase64Image } from "../utils/datafunctions";
 import { PromiseScheduler } from "../utils/promises";
 import getUserService from "./user.service";
 
@@ -13,6 +14,7 @@ export interface IChatService {
     ShowList(ownerId: string): Promise<IChatList[]>;
     ShowMessages(id: string): Promise<IMessage[]>;
     AddMessage(chatId: string, content: string, role: RoleType): Promise<void>;
+    AddVMessage(chatId:string, content: string, role: RoleType, image_url: string): Promise<void>;
 }
 
 const generateServiceError = (message: string, status: number) => {
@@ -93,13 +95,33 @@ function getChatService(repository: IChatRepository): IChatService {
         await repository.AddMessage(chatId, content, role);
     }
 
+    async function AddVMessage(chatId:string, content: string, role: RoleType, image_url: string): Promise<void> {
+        if (!content) {
+            generateServiceError(`INVALID MESSAGE: ${content}`, 400);
+        }
+
+        if (content.length < 5) {
+            generateServiceError(`INVALID MESSAGE: ${content}`, 400);
+        }
+
+        if (role != "user") {
+            generateServiceError(`INVALID ROLE: ${role}`, 400);
+        }
+
+        if (!isValidBase64Image(image_url)) {
+            generateServiceError(`INVALID IMAGE: ${role}`, 400);
+        }
+        await repository.AddVMessage(chatId, content, role, image_url);
+    }
+
     return {
         Create,
         Show,
         ShowList,
         ShowMessages,
         AddMessage,
-        Delete
+        Delete,
+        AddVMessage
     };
 }
 
