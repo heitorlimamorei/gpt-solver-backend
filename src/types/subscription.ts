@@ -3,6 +3,7 @@ import { firebaseTimesStampType } from "./utils-types";
 export interface ISubscriptionModel {
     tokens_limit: number;
     processImages: boolean;
+    processPDFs: boolean;
     acessGoogle: boolean;
     price: number;
 }
