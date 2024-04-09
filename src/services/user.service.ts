@@ -1,9 +1,10 @@
 import { IUserRepository } from "../repositories/user.repository";
 import IUser from "../types/user";
 import isValidEmail from "../utils/email";
+import { IChatService } from "./chat.service";
 
 export interface IUserService {
-    Create(email: string, name: string): Promise<void>;
+    Create(email: string, name: string): Promise<string>;
     Update(user: IUser): Promise<void>;
     AddTokens(id: string, tokens: number): Promise<void>;
     RemoveTokens(id: string, tokens: number): Promise<void>;
@@ -20,11 +21,13 @@ const generateServiceError = (message: string, status: number) => {
 };
 
 export default function getUserService(repository: IUserRepository): IUserService {
-    async function CreateUser(email: string, name: string): Promise<void> {
+    async function CreateUser(email: string, name: string): Promise<string> {
         if (!isValidEmail(email)) {
             generateServiceError(`INVALID EMAIL: ${email}`, 400);
         }
-        await repository.Create(email, name);
+        const id = await repository.Create(email, name);
+
+        return id;
     }
 
     async function UpdateUser(user: IUser): Promise<void> {

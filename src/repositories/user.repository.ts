@@ -14,7 +14,7 @@ interface IUpdatedField<T>  {
 type WritterFunction<T> = (c: IUser) =>  IUpdatedField<T>;
 
 export interface IUserRepository {
-    Create(email: string, name: string): Promise<void>;
+    Create(email: string, name: string): Promise<string>;
     Update(user: IUser): Promise<void>;
     UpdateField<T>(id: string, updatedField: WritterFunction<T>): Promise<void>;
     Show(id: string): Promise<IUser>;
@@ -23,7 +23,7 @@ export interface IUserRepository {
 }
 
 export default function getUserRepository(): IUserRepository {
-    async function CreateUser(email: string, name: string): Promise<void>{
+    async function CreateUser(email: string, name: string): Promise<string>{
         const usersRef = collection(db, "users");
         const docRef = await addDoc(usersRef, {
             email: email,
@@ -37,6 +37,8 @@ export default function getUserRepository(): IUserRepository {
         if (!docRef.id) {
             generateRepositoryError(`ERROR WHEN CREATE USER`, 500);
         }
+
+        return docRef.id;
     }
     
     async function ShowUserById(id: string): Promise<IUser> {

@@ -1,6 +1,7 @@
 import { IUserService } from "../services/user.service"
 import {Request, Response, NextFunction} from "express";
 import IUser, { INewUser } from "../types/user";
+import { IChatService } from "../services/chat.service";
 
 export interface IUserController {
   Create(req: Request, res: Response, next: NextFunction): Promise<void>;
@@ -21,7 +22,7 @@ const generateHandlerError = (message: string, status: number) => {
     throw new Error(`HANDLER:${message}-${status}`);
 };
 
-export default function getUserController(service: IUserService): IUserController {
+export default function getUserController(service: IUserService, chatSvc: IChatService): IUserController {
     async function Create(
       req: Request,
       res: Response,
@@ -35,7 +36,9 @@ export default function getUserController(service: IUserService): IUserControlle
         if (name.length < 3) {
             generateHandlerError(`INVALID NAME: ${name}`, 400);
         }
-        await service.Create(email, name);
+        const userId = await service.Create(email, name);
+
+        await chatSvc.Create(userId, "Olá Mundo!");
         res.status(201).json({
           message: "User created successfully"
         });
