@@ -20,3 +20,11 @@ export default interface ISubscription {
     endDate: firebaseTimesStampType;
     createdAt: firebaseTimesStampType;
 }
+
+export interface INewSubscription {
+    subscriptionType: string;
+    ownerId: string;
+    price: number;
+    endDate: Date;
+    createdAt: Date;
+}

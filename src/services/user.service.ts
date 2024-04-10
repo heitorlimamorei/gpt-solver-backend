@@ -1,7 +1,6 @@
 import { IUserRepository } from "../repositories/user.repository";
 import IUser from "../types/user";
 import isValidEmail from "../utils/email";
-import { IChatService } from "./chat.service";
 
 export interface IUserService {
     Create(email: string, name: string): Promise<string>;
