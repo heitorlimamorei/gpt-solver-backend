@@ -1,22 +1,20 @@
 import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/config";
-import ISubscription from "../types/subscription";
+import ISubscription, { INewSubscription } from "../types/subscription";
 import sanitilizeArrayData from "../utils/datafunctions";
 
-const generateRepositoryError = (message: string, status: number) => {
-    throw new Error(`REPOSITORY:${message}-${status}`);
-};
-
-interface ISubscriptionRepo {
-    Create(subscription: ISubscription): Promise<string>;
+export interface ISubscriptionRepo {
+    Create(subscription: INewSubscription): Promise<string>;
     Delete(id: string): Promise<void>;
     Show(id: string): Promise<ISubscription>;
     ShowByUserId(userId: string): Promise<ISubscription[]>;
 }
-
+const generateRepositoryError = (message: string, status: number) => {
+    throw new Error(`REPOSITORY:${message}-${status}`);
+};
 
 export default function getSubscriptionRepository(): ISubscriptionRepo {
-    async function Create(subscription: ISubscription): Promise<string>{
+    async function Create(subscription: INewSubscription): Promise<string>{
         const collectionRef = collection(db, "subscriptions");
         const docRef = await addDoc(collectionRef, subscription);
         if (!docRef.id) {
