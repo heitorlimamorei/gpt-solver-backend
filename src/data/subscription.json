@@ -1,0 +1,16 @@
+{
+ "basic" : {
+    "tokens_limit": 50000,
+    "processImages": false,
+    "processPDFs": false,
+    "acessGoogle": false,
+    "price": 6
+ },
+ "ultimate" : {
+    "tokens_limit": 100000,
+    "processImages": true,
+    "processPDFs": true,
+    "acessGoogle": true,
+    "price": 9
+ }
+}
