@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import userRouter from "./routes/user.routes";
 import chatRouter from "./routes/chat.routes";
 import subscriptionRouter from "./routes/subscription.routes";
+import pdfRouter from "./routes/pdf.routes";
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(express.json({limit: '50mb'}));
 app.use("/v1/user", userRouter);
 app.use("/v1/chat", chatRouter);
 app.use("/v1/subscription", subscriptionRouter);
+app.use("/v1/pdf", pdfRouter);
 
 app.use((err:Error, req: Request, res: Response) => {
     if (err.message) {
