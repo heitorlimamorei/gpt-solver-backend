@@ -24,9 +24,7 @@ export default function getPdfController(service: IPdfService): IPdfController {
             }
 
             const text = await service.ExtractText(file);
-            res.status(200).json({
-                text: text
-            });
+            res.status(200).json(text);
         } catch (err: any) {
             next(err.message);
         }
