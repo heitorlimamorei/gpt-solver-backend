@@ -43,7 +43,7 @@ export default function getSubscriptionController(service: ISubscriptionService)
                 res.status(200).json(subscriptions);
                 return;
             } else if (query?.id) {
-                const subscriptions = await service.ShowByOwnerId(query.id as string);
+                const subscriptions = await service.Show(query.id as string);
                 res.status(200).json(subscriptions);
                 return;
             }
