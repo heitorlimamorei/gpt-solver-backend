@@ -1,7 +1,8 @@
-import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/config";
 import ISubscription, { INewSubscription } from "../types/subscription";
 import sanitilizeArrayData from "../utils/datafunctions";
+import { hasDatePassed } from "../utils/dateFuncs";
 
 export interface ISubscriptionRepo {
     Create(subscription: INewSubscription): Promise<string>;
@@ -48,17 +49,19 @@ export default function getSubscriptionRepository(): ISubscriptionRepo {
 
     async function ShowByUserId(userId: string): Promise<ISubscription[]> {
         const collectionRef = collection(db, "subscriptions");
-        const q = query(collectionRef, where('endDate', '>', Timestamp.now()));
-
+        const q = query(collectionRef, where('ownerId', '==', userId));
+    
         const subscriptions = await getDocs(q);
         
-        const sanitizedData = sanitilizeArrayData<ISubscription[]>(subscriptions);
+        const sanitizedData = sanitilizeArrayData<ISubscription>(subscriptions);
+
+        const activeSubscriptions = sanitizedData.filter(({endDate}) => !hasDatePassed(endDate));
 
         if (sanitilizeArrayData.length == 0){
             generateRepositoryError(`SUBSCRIPTIONS NOT FOUND - ID: ${userId}`, 404);
         }
 
-        return sanitizedData as unknown as ISubscription[];
+        return activeSubscriptions as unknown as ISubscription[];
     }
 
     return {
