@@ -7,6 +7,7 @@ interface IMessageRBody extends IMessage {
 }
 
 export interface IChatController {
+    createChatPDF(req: Request, res: Response, next: NextFunction): Promise<void>;
     createChat(req: Request, res: Response, next: NextFunction): Promise<void>;
     deleteChat(req: Request, res: Response, next: NextFunction): Promise<void>;
     getChat(req: Request, res: Response, next: NextFunction): Promise<void>;
@@ -29,6 +30,21 @@ function getChatController(chatService: IChatService): IChatController {
             }
 
             const id = await chatService.Create(ownerId, name);
+            res.status(201).json({ id });
+        } catch (error: any) {
+            next(error.message);
+        }
+    }
+
+    async function createChatPDF(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { ownerId, name }: IChat = req.body;
+
+            if (!ownerId || typeof ownerId !== "string" || !name || typeof name !== "string" || name.length < 4) {
+                generateHandlerError("Invalid ownerId or name", 400);
+            }
+
+            const id = await chatService.CreateChatPDF(ownerId, name);
             res.status(201).json({ id });
         } catch (error: any) {
             next(error.message);
@@ -117,6 +133,7 @@ function getChatController(chatService: IChatService): IChatController {
     }
 
     return {
+        createChatPDF,
         createChat,
         deleteChat,
         getChat,
