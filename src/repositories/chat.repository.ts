@@ -12,6 +12,7 @@ type RoleType = "user" | "assistant" | "system";
 
 export interface IChatRepository {
     Create(ownerId: string, name: string): Promise<IChatResp>;
+    CreateChatPDF(ownerId: string, name: string): Promise<IChatResp>;
     Delete(id: string): Promise<void>;
     Show(id: string): Promise<IChat>;
     ShowList(ownerId: string): Promise<IChatList[]>;
@@ -20,11 +21,11 @@ export interface IChatRepository {
     AddVMessage(chatId: string, content: string, role: RoleType, image_url: string): Promise<void>;
 }
 
-async function createMessageRepo(chatId: string): Promise<void> {
+async function createMessageRepo(chatId: string, message: string): Promise<void> {
     const messagesRef = collection(db, `chats/${chatId}/messages`);
     const messageRef = await addDoc(messagesRef, {
         role: "system",
-        content: "Olá, eu sou o GPT Solver, como posso ajudar?",
+        content: message,
         createdAt: new Date()
     });
 
@@ -49,10 +50,30 @@ export default function getChatRepository(): IChatRepository {
             generateRepositoryError(`ERROR WHEN CREATE CHAT`, 500);
         }
 
-        await createMessageRepo(docRef.id);
+        await createMessageRepo(docRef.id, "Olá, eu sou o GPT Solver, como posso ajudar?");
 
         return {id: docRef.id};
     }
+
+    async function CreateChatPDF(ownerId: string, name: string) {
+        const usersRef = collection(db, "chats");
+
+        const chat = {
+            name: name,
+            ownerId: ownerId,
+            createdAt: new Date(),
+        };
+
+        const docRef = await addDoc(usersRef, chat);
+
+        if (!docRef.id) {
+            generateRepositoryError(`ERROR WHEN CREATE CHAT`, 500);
+        }
+
+        await createMessageRepo(docRef.id, "Sou um assistente GPT, capaz de receber textos extraidos de arquivos PDFs e realizar as operações solicitadas pelo usuário.");
+
+        return {id: docRef.id};
+    };
 
     async function Delete(chatId: string): Promise<void> {
        try {
@@ -130,6 +151,7 @@ export default function getChatRepository(): IChatRepository {
         ShowList,
         ShowMessages,
         AddMessage,
-        AddVMessage
+        AddVMessage,
+        CreateChatPDF
     };
 };
