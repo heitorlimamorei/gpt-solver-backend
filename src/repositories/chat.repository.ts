@@ -3,6 +3,9 @@ import { IChat, IChatList, IChatResp, IMessage } from "../types/chat";
 import { addDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 import sanitilizeArrayData from "../utils/datafunctions";
+import { GET } from "../utils/promises";
+import { firebaseTimesStampType } from "../types/utils-types";
+import { firestoreTimestampToDate, toggleDateToJson } from "../utils/dateFuncs";
 
 const generateRepositoryError = (message: string, status: number) => {
     throw new Error(`REPOSITORY:${message}-${status}`);
@@ -10,9 +13,19 @@ const generateRepositoryError = (message: string, status: number) => {
 
 type RoleType = "user" | "assistant" | "system";
 
+export interface ISheetItem {
+  id: string;
+  name: string;
+  type: number;
+  description: string;
+  author: string;
+  date: firebaseTimesStampType;
+}
+  
 export interface IChatRepository {
     Create(ownerId: string, name: string): Promise<IChatResp>;
     CreateChatPDF(ownerId: string, name: string): Promise<IChatResp>;
+    CreateFiancialAssitant(ownerId: string, name: string, sheetId:string): Promise<IChatResp>;
     Delete(id: string): Promise<void>;
     Show(id: string): Promise<IChat>;
     ShowList(ownerId: string): Promise<IChatList[]>;
@@ -74,6 +87,74 @@ export default function getChatRepository(): IChatRepository {
 
         return {id: docRef.id};
     };
+
+    async function CreateFiancialAssitant(
+      ownerId: string,
+      name: string,
+      sheetId: string
+    ) {
+      const usersRef = collection(db, "chats");
+
+      const chat = {
+        name: name,
+        ownerId: ownerId,
+        sheetId: sheetId,
+        createdAt: new Date(),
+      };
+
+      const sheetData = await GET<ISheetItem[]>(
+        `http://localhost:10000/api/v1/sheet/${sheetId}/items`
+      );
+
+      if (sheetData.status !== 200) {
+        generateRepositoryError("Error when getting sheet data", 500);
+      }
+
+      if (!sheetData.data) {
+        generateRepositoryError("ERROR, SHEET DATA EMPTY", 500);
+      }
+
+      const items = sheetData.data.map((item) => {
+        const date = firestoreTimestampToDate(item.date);
+        return {
+          ...item,
+          date: toggleDateToJson(date),
+        };
+      });
+
+      const JSONItems = JSON.stringify(items);
+
+      const docRef = await addDoc(usersRef, chat);
+
+      if (!docRef.id) {
+        generateRepositoryError(`ERROR WHEN CREATE CHAT`, 500);
+      }
+
+      await createMessageRepo(
+        docRef.id,
+        `Sou um assistente GPT, capaz de fazer análises de planilhas financeiras, e realizar as operações solicitadas pelo usuário.
+        Os items da planilha atual estão no formato de JSON: ${JSONItems}.
+
+        De respostas simples e diretas para o usuário, seguindo os exemplos: "Quanto foi o gasto no mês passado? No mês passado foram gastos R$ 12000." 
+        "Quanto foi gasto com o tipo saúde no mês passado? No mês passado foram gastos R$ 13000 com saúde".
+        "Quanto foi a média de gastos com alimentação ? A média de gastos com alimentação foi de R$ 1200."
+
+        Não explique como está encontrando as respostas, somente as responda diretamentamente.
+
+        Caso ele peça para gerar um gráfico qualquer você deve processar o JSON e retornar um JSON que relacione as informações requeridas pelo usário, como no exemplo a baixo:
+
+        "Prompt: Gere um gráfico que relacione os tipos de gastos com as suas respectivos totais. Resposta do assistant: json:{
+            "Alimentação": 12000,
+            "Transporte": 13000,
+            "Lazer": 14000
+        }"
+
+        Só gere respostas no formato JSON caso o usuário peça para o assistente gerar um gráifico ou uma tabela. 
+        `
+      );
+
+      return { id: docRef.id };
+    }
 
     async function Delete(chatId: string): Promise<void> {
        try {
@@ -152,6 +233,7 @@ export default function getChatRepository(): IChatRepository {
         ShowMessages,
         AddMessage,
         AddVMessage,
-        CreateChatPDF
+        CreateChatPDF,
+        CreateFiancialAssitant
     };
 };
