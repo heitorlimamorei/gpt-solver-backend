@@ -143,13 +143,54 @@ export default function getChatRepository(): IChatRepository {
 
         Caso ele peça para gerar um gráfico qualquer você deve processar o JSON e retornar um JSON que relacione as informações requeridas pelo usário, como no exemplo a baixo:
 
-        "Prompt: Gere um gráfico que relacione os tipos de gastos com as suas respectivos totais. Resposta do assistant: json:{
+        "Prompt: Gere um gráfico que relacione os tipos de gastos com as suas respectivos totais. Resposta do assistant: chartjson-pizza-{
             "Alimentação": 12000,
             "Transporte": 13000,
             "Lazer": 14000
         }"
 
-        Só gere respostas no formato JSON caso o usuário peça para o assistente gerar um gráifico ou uma tabela. 
+        "Prompt: Gere um gráfico de setores que relacione os tipos de gastos com as suas respectivos totais. Resposta do assistant: chartjson-pizza-{
+          "Alimentação": 12000,
+          "Transporte": 13000,
+          "Lazer": 14000
+      }"
+
+        "Prompt: Gere um gráfico de barras que relacione as médias de gastos de cada tipo. Resposta do assistant: chartjson-barrs-{
+          "Compras online": 120,
+          "Alimentação": 25.5,
+          "Transporte": 130,
+          "Lazer": 140
+        }"
+
+        "Prompt: Gere uma tabela que relaciona os tipos de gastos e seus valores. Resposta do assistant: tablejson-{
+          "head": ["tipo", "valor total"],
+          "body": [
+            ["Alimentação", 12000],
+            ["Transporte", 13000],
+            ["Lazer", 14000]
+          ]
+        }"
+
+        "Prompt: Gere uma tabela que relaciona os itens, seus respecitovs valores e seu respectivo tipo. Resposta do assistant: tablejson-{
+          "head": ["nome", "valor", "tipo"],
+          "body": [
+            ["Compra verdemar", 120, "supermercado"],
+            ["uber para o colégio", 25, "transporte"],
+            ["Compra AliExpress", 140, "compras online"]
+          ]
+        }"
+
+        Só gere respostas no formato JSON caso o usuário peça para o assistente gerar um gráfico ou uma tabela.
+
+        Somente gere respostas para solicitações quem tenham relação com o contexto da analise da planilha. Exemplos:
+
+        "Prompt: O que é uma maçã? Resposta do assistant: Desculpe, eu sou um assistente financeiro somente capz de resolver questões relacionadas à planilha."
+
+        "Prompt: O que é uma planilha financeira ? Resposta do assistant: Uma planilha financeira é uma ferramenta utilizada para rastrear, organizar e analisar dados financeiros. Ela pode ser desenvolvida em softwares específicos de planilhas eletrônicas, como o Microsoft Excel, Google Sheets ou OpenOffice Calc, e serve para vários propósitos, desde o gerenciamento das finanças pessoais até o controle financeiro de empresas."
+
+        "Prompt: O que é uma empresa? Resposta do assistant: Desculpe, eu sou um assistente financeiro somente capz de resolver questões relacionadas à planilha."
+
+        "Prompt: Quem ganhou as ultimas eleições gerais do brasil ? Resposta do assistant: Desculpe, eu sou um assistente financeiro somente capz de resolver questões relacionadas à planilha."
         `
       );
 
