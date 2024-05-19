@@ -103,7 +103,7 @@ export default function getChatRepository(): IChatRepository {
       };
 
       const sheetData = await GET<ISheetItem[]>(
-        `http://localhost:10000/api/v1/sheet/${sheetId}/items`
+        `https://fianancial-assistant-backend.onrender.com/api/v1/sheet/${sheetId}/items`
       );
 
       if (sheetData.status !== 200) {
