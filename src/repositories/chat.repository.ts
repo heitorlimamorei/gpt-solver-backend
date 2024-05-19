@@ -143,24 +143,71 @@ export default function getChatRepository(): IChatRepository {
 
         Caso ele peça para gerar um gráfico qualquer você deve processar o JSON e retornar um JSON que relacione as informações requeridas pelo usário, como no exemplo a baixo:
 
-        "Prompt: Gere um gráfico que relacione os tipos de gastos com as suas respectivos totais. Resposta do assistant: chartjson-pizza-{
-            "Alimentação": 12000,
-            "Transporte": 13000,
-            "Lazer": 14000
-        }"
+        "Prompt: Gere um gráfico que relacione os tipos de gastos com as suas respectivos totais. Resposta do assistant: ${"```"}chartjson{
+            "type":"pizza",
+            "data": [
+              {
+                "name": "Alimentação",
+                "value": 12000
+              },
+              {
+                "name": "Transporte",
+                "value": 1200
+              },
+              {
+                "name": "Lazer",
+                "value": 400
+              }
+            ]
+        }${"´´´"}"
 
-        "Prompt: Gere um gráfico de setores que relacione os tipos de gastos com as suas respectivos totais. Resposta do assistant: chartjson-pizza-{
-          "Alimentação": 12000,
-          "Transporte": 13000,
-          "Lazer": 14000
-      }"
+        "Prompt: Gere um gráfico de setores que relacione os tipos de gastos com as suas respectivos totais. Resposta do assistant: ${"```"}chartjson{
+          "type":"pizza",
+          "data": [
+            {
+              "name": "Alimentação",
+              "value": 12000
+            },
+            {
+              "name": "Transporte",
+              "value": 1200
+            },
+            {
+              "name": "Lazer",
+              "value": 400
+            }
+          ]
+      }${"´´´"}"
 
-        "Prompt: Gere um gráfico de barras que relacione as médias de gastos de cada tipo. Resposta do assistant: chartjson-barrs-{
-          "Compras online": 120,
-          "Alimentação": 25.5,
-          "Transporte": 130,
-          "Lazer": 140
-        }"
+        "Prompt: Gere um gráfico de barras que relacione as médias de gastos de cada tipo. Resposta do assistant: ${"```"}chartjson{
+          "type": "barras",
+          "data": [
+            {"name":"Compras online", "value": 120},
+            {"name":"Alimentação", "value": 25.5},
+            {"name":"Transporte", "value": 130},
+            {"name":"Lazer", "value": 140}
+          ]
+        }${"´´´"}"
+
+        "Prompt: Gere um gráfico de linha que compare a evolução da soma dos gastos entre saúde e transporte em função do tempo. Resposta do assistant: ${"```"}chartjson{
+          "type": "linha",
+          "data": [
+            {"name":"2023-01-30", "value": [{"name": "saúde", "value": 120}, {"name": "transporte", "value": 0}]},
+            {"name":"2023-02-01", "value": [{"name": "saúde", "value": 140}, {"name": "transporte", "value": 40}]},
+            {"name":"2023-02-13", "value": [{"name": "saúde", "value": 160}, {"name": "transporte", "value": 50}]},
+            {"name":"2023-02-28", "value": [{"name": "saúde", "value": 200}, {"name": "transporte", "value": 52.5}]},
+          ]
+        }${"´´´"}"
+
+        "Prompt: Gere um gráfico de linha que relacione as médias de gastos com data. Resposta do assistant. Resposta do assistant: ${"```"}chartjson{
+          "type": "linha",
+          "data": [
+            {"name":"2023-01-30", "value": [{"name": "média", "value": 120}]},
+            {"name":"2023-02-01", "value": [{"name": "média", "value": 124.5}],
+            {"name":"2023-02-13", "value": [{"name": "média", "value": 130.2}],
+            {"name":"2023-02-28", "value": [{"name": "média", "value": 129.5}],
+          ]
+        }${"´´´"}"
 
         "Prompt: Gere uma tabela que relaciona os tipos de gastos e seus valores. Resposta do assistant: tablejson-{
           "head": ["tipo", "valor total"],
