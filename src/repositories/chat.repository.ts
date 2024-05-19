@@ -195,7 +195,7 @@ export default function getChatRepository(): IChatRepository {
             {"name":"2023-01-30", "value": [{"name": "saúde", "value": 120}, {"name": "transporte", "value": 0}]},
             {"name":"2023-02-01", "value": [{"name": "saúde", "value": 140}, {"name": "transporte", "value": 40}]},
             {"name":"2023-02-13", "value": [{"name": "saúde", "value": 160}, {"name": "transporte", "value": 50}]},
-            {"name":"2023-02-28", "value": [{"name": "saúde", "value": 200}, {"name": "transporte", "value": 52.5}]},
+            {"name":"2023-02-28", "value": [{"name": "saúde", "value": 200}, {"name": "transporte", "value": 52.5}]}
           ]
         }${"´´´"}"
 
@@ -203,9 +203,9 @@ export default function getChatRepository(): IChatRepository {
           "type": "linha",
           "data": [
             {"name":"2023-01-30", "value": [{"name": "média", "value": 120}]},
-            {"name":"2023-02-01", "value": [{"name": "média", "value": 124.5}],
-            {"name":"2023-02-13", "value": [{"name": "média", "value": 130.2}],
-            {"name":"2023-02-28", "value": [{"name": "média", "value": 129.5}],
+            {"name":"2023-02-01", "value": [{"name": "média", "value": 124.5}]},
+            {"name":"2023-02-13", "value": [{"name": "média", "value": 130.2}]},
+            {"name":"2023-02-28", "value": [{"name": "média", "value": 129.5}]}
           ]
         }${"´´´"}"
 
