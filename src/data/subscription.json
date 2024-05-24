@@ -12,5 +12,12 @@
     "processPDFs": true,
     "acessGoogle": true,
     "price": 9
+ },
+ "fcai-demo": {
+   "tokens_limit": 50000,
+   "processImages": false,
+   "processPDFs": false,
+   "acessGoogle": false,
+   "price": 0
  }
 }
