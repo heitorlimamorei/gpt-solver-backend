@@ -6,6 +6,14 @@ export interface IChat {
     createdAt: firebaseTimesStampType;
 }
 
+export interface INewFiancialAssistant {
+    ownerId: string;
+    name: string;
+    sheetId: string;
+    createdAt: firebaseTimesStampType;
+}
+
+
 export interface IMessage {
     id?: string;
     createdAt?: firebaseTimesStampType;

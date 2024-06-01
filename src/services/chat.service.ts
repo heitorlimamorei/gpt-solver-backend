@@ -9,6 +9,7 @@ export type RoleType = "user" | "assistant" | "system";
 
 export interface IChatService {
     CreateChatPDF(ownerId: string, name: string): Promise<string>;
+    CreateFiancialAssitant(ownerId: string, name: string, sheetId:string): Promise<string>;
     Create(ownerId: string, name: string): Promise<string>;
     Delete(id: string): Promise<void>;
     Show(id: string): Promise<IChat>;
@@ -38,6 +39,23 @@ function getChatService(repository: IChatRepository): IChatService {
         }
 
         const chat = await repository.CreateChatPDF(ownerId, name);
+
+        await userService.AddChat(owner.id, chat.id)
+        return chat.id;
+    }
+
+    async function CreateFiancialAssitant(ownerId: string, name: string, sheetId:string): Promise<string> {
+        const owner = await userService.Show(ownerId);
+
+        if (!owner) {
+            generateServiceError(`USER NOT FOUND: ${ownerId}`, 404);
+        }
+
+        if (name.length < 4) {
+            generateServiceError(`INVALID NAME: ${name}`, 400);
+        }
+
+        const chat = await repository.CreateFiancialAssitant(ownerId, name, sheetId);
 
         await userService.AddChat(owner.id, chat.id)
         return chat.id;
@@ -134,6 +152,7 @@ function getChatService(repository: IChatRepository): IChatService {
 
     return {
         CreateChatPDF,
+        CreateFiancialAssitant,
         Create,
         Show,
         ShowList,

@@ -11,6 +11,7 @@ const chatRouter = express.Router();
 
 chatRouter.post("/", controller.createChat);
 chatRouter.post("/chatpdf", controller.createChatPDF);
+chatRouter.post("/fiancial-assistant", controller.createFiancialAssitant)
 chatRouter.delete("/:id", controller.deleteChat);
 chatRouter.get("/:id", controller.getChat);
 chatRouter.get("/list/:ownerId", controller.listChats);

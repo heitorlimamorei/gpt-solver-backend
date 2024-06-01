@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { IChatService, RoleType } from "../services/chat.service";
-import { IChat, IMessage } from "../types/chat";
+import { IChat, IMessage, INewFiancialAssistant } from "../types/chat";
 
 interface IMessageRBody extends IMessage {
     chatId: string;
@@ -8,6 +8,7 @@ interface IMessageRBody extends IMessage {
 
 export interface IChatController {
     createChatPDF(req: Request, res: Response, next: NextFunction): Promise<void>;
+    createFiancialAssitant(req: Request, res: Response, next: NextFunction): Promise<void>;
     createChat(req: Request, res: Response, next: NextFunction): Promise<void>;
     deleteChat(req: Request, res: Response, next: NextFunction): Promise<void>;
     getChat(req: Request, res: Response, next: NextFunction): Promise<void>;
@@ -30,6 +31,21 @@ function getChatController(chatService: IChatService): IChatController {
             }
 
             const id = await chatService.Create(ownerId, name);
+            res.status(201).json({ id });
+        } catch (error: any) {
+            next(error.message);
+        }
+    }
+
+    async function createFiancialAssitant(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { ownerId, name, sheetId }: INewFiancialAssistant = req.body;
+
+            if (!ownerId || !name || !sheetId) {
+                generateHandlerError("Invalid ownerId or name", 400);
+            }
+
+            const id = await chatService.CreateFiancialAssitant(ownerId, name, sheetId);
             res.status(201).json({ id });
         } catch (error: any) {
             next(error.message);
@@ -133,6 +149,7 @@ function getChatController(chatService: IChatService): IChatController {
     }
 
     return {
+        createFiancialAssitant,
         createChatPDF,
         createChat,
         deleteChat,
