@@ -1,9 +1,8 @@
 import { IChatRepository } from "../repositories/chat.repository";
-import getUserRepository from "../repositories/user.repository";
 import { IChat, IChatList, IMessage } from "../types/chat";
 import { isValidBase64Image } from "../utils/datafunctions";
 import { PromiseScheduler } from "../utils/promises";
-import getUserService from "./user.service";
+import { IUserService } from "./user.service";
 
 export type RoleType = "user" | "assistant" | "system";
 
@@ -23,10 +22,7 @@ const generateServiceError = (message: string, status: number) => {
     throw new Error(`SERVICE:${message}-${status}`);
 };
 
-const userRepo = getUserRepository();
-const userService = getUserService(userRepo);
-
-function getChatService(repository: IChatRepository): IChatService {
+function getChatService(repository: IChatRepository, userService: IUserService): IChatService {
     async function CreateChatPDF(ownerId: string, name: string): Promise<string> {
         const owner = await userService.Show(ownerId);
 

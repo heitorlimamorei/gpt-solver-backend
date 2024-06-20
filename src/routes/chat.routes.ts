@@ -2,9 +2,15 @@ import express from "express";
 import getChatRepository from "../repositories/chat.repository";
 import getChatController from "../controllers/chat.controller";
 import getChatService from "../services/chat.service";
+import getUserService from "../services/user.service";
+import getUserRepository from "../repositories/user.repository";
 
 const repo = getChatRepository();
-const service = getChatService(repo);
+const userRepo = getUserRepository();
+
+const userService = getUserService(userRepo);
+const service = getChatService(repo, userService);
+
 const controller = getChatController(service);
 
 const chatRouter = express.Router();
