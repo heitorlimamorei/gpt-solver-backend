@@ -2,9 +2,11 @@ import { IUserService } from "../services/user.service"
 import {Request, Response, NextFunction} from "express";
 import IUser, { INewUser } from "../types/user";
 import { IChatService } from "../services/chat.service";
+import { ISubscriptionService } from "../services/subscription.service";
 
 export interface IUserController {
   Create(req: Request, res: Response, next: NextFunction): Promise<void>;
+  CreateCmdsUser(req: Request, res: Response, next: NextFunction): Promise<void>;
   Show(req: Request, res: Response, next: NextFunction): Promise<void>;
   GetTokensCount(req: Request, res: Response, next: NextFunction): Promise<void>;
   Charge(req: Request, res: Response, next: NextFunction): Promise<void>;
@@ -22,7 +24,7 @@ const generateHandlerError = (message: string, status: number) => {
     throw new Error(`HANDLER:${message}-${status}`);
 };
 
-export default function getUserController(service: IUserService, chatSvc: IChatService): IUserController {
+export default function getUserController(service: IUserService, chatSvc: IChatService, subscriptionSvc: ISubscriptionService): IUserController {
     async function Create(
       req: Request,
       res: Response,
@@ -39,6 +41,31 @@ export default function getUserController(service: IUserService, chatSvc: IChatS
         const userId = await service.Create(email, name);
 
         await chatSvc.Create(userId, "Olá Mundo!");
+        res.status(201).json({
+          message: "User created successfully"
+        });
+      } catch (err: any) {
+        next(err.message);
+      }
+    }
+    async function CreateCmdsUser(
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ): Promise<void> {
+      try {
+        const { email, name } = req.body as INewUser;
+        if (!email || !name) {
+            generateHandlerError(`MALFORMED BODY: ${req.body}`, 400);
+        }
+        if (name.length < 3) {
+            generateHandlerError(`INVALID NAME: ${name}`, 400);
+        }
+        const userId = await service.Create(email, name);
+
+        await subscriptionSvc.Create(userId, 'fcai-demo')
+        await chatSvc.Create(userId, "Olá Mundo!");
+
         res.status(201).json({
           message: "User created successfully"
         });
@@ -155,6 +182,7 @@ export default function getUserController(service: IUserService, chatSvc: IChatS
       }
     return {
         Create,
+        CreateCmdsUser,
         Show,
         GetTokensCount,
         Update,
