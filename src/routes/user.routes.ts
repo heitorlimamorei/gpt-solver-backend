@@ -9,7 +9,7 @@ import getChatService from "../services/chat.service";
 const repository = getUserRepository();
 const service = getUserService(repository);
 const chatRepo = getChatRepository();
-const chatSvc = getChatService(chatRepo);
+const chatSvc = getChatService(chatRepo, service);
 
 const controller = getUserController(service, chatSvc);
 
