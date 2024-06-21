@@ -25,14 +25,14 @@ const getNewSubscription = (ownerId: string, type: string): INewSubscription => 
 
     endDate.setDate(endDate.getDate() + 30);
 
-    const price  = getSubscriptionModels()[type].price;
+    const model  = getSubscriptionModels()[type];
 
-    if (!price) generateServiceError(`INVALID TYPE: ${type}`, 400);
+    if (!model) generateServiceError(`INVALID TYPE: ${type}`, 400);
 
     return {
         subscriptionType: type,
         ownerId: ownerId,
-        price: price,
+        price: model.price,
         endDate: endDate,
         createdAt: new Date(),
     }

@@ -20,7 +20,7 @@ const controller = getUserController(service, chatSvc, subscriptionSvc);
 const router = express.Router();
 
 router.post("/", controller.Create);
-router.post("/cmdsuser", controller.Create);
+router.post("/cmdsuser", controller.CreateCmdsUser);
 router.get("/", controller.Show);
 router.get("/tokenscount/:id", controller.GetTokensCount);
 router.put("/", controller.Update);
